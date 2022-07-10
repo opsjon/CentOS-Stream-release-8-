@@ -1,0 +1,42 @@
+使用sealer部署k8s集群：
+
+准备工作：
+1.vm_init.sh
+
+2.关闭swap
+swapoff -a
+sed -i '/\<swap\>/d' /etc/fstab
+
+3.修改主机名
+hostnamectl set-hostname master0
+hostnamectl set-hostname worker0
+hostnamectl set-hostname worker1
+
+4.配置主机名本地解析
+echo "192.168.155.100 master0" >> /etc/hosts
+echo "192.168.155.101 worker0" >> /etc/hosts
+echo "192.168.155.102 worker1" >> /etc/hosts
+
+5.安装一些包
+yum -y install iproute-tc socat
+
+6.在master0上安装sealer以及使用sealer部署k8s集群
+sealer简介: http://sealer.cool/
+
+wget https://github.com/sealerio/sealer/releases/download/v0.8.5/sealer-v0.8.5-linux-amd64.tar.gz
+tar -xf sealer-v0.8.5-linux-amd64.tar.gz
+mv sealer /usr/bin/
+
+sealer run registry.cn-qingdao.aliyuncs.com/sealer-io/kubernetes:v1.19.8 \
+--masters 192.168.155.100 \
+--nodes 192.168.155.101,192.168.155.102 \
+--passwd 123456
+
+sealer run -h
+  sealer run registry.cn-qingdao.aliyuncs.com/sealer-io/kubernetes:v1.19.8 --masters [arg] --nodes [arg]
+
+  -m, --masters string        set Count or IPList to masters
+  -n, --nodes string          set Count or IPList to nodes
+  -p, --passwd string         set cloud provider or baremetal server password
+
+注: 修改docker的cgroupdriver为systemd
