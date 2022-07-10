@@ -1,7 +1,7 @@
 使用sealer部署k8s集群：
 
 准备工作：
-1.vm_init.sh
+1.执行脚本vm_init.sh进行一些初始化设置
 
 2.关闭swap
 swapoff -a
